@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { useAppStore } from '@/stores/useAppStore'
 import { FileText, Send, CheckCircle, Clock, Loader2 } from 'lucide-react'
 
 const jenisSurat = [
@@ -19,6 +21,8 @@ const jenisSurat = [
 
 export function LayananSuratPage() {
   const { toast } = useToast()
+  const { user } = useAuthStore()
+  const { setCurrentPage } = useAppStore()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState({
@@ -28,6 +32,13 @@ export function LayananSuratPage() {
     jenisSurat: '',
     keterangan: '',
   })
+
+  // Pre-fill form with logged-in user data
+  useEffect(() => {
+    if (user) {
+      setForm(f => ({ ...f, nama: user.name }))
+    }
+  }, [user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,7 +52,7 @@ export function LayananSuratPage() {
       const res = await fetch('/api/surat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, userId: user?.id || undefined }),
       })
       if (!res.ok) throw new Error()
       setSuccess(true)
@@ -87,7 +98,10 @@ export function LayananSuratPage() {
                     <CheckCircle className="w-20 h-20 text-emerald-500 mx-auto mb-4" />
                     <h3 className="text-2xl font-bold text-gray-900">Pengajuan Berhasil!</h3>
                     <p className="text-gray-500 mt-2">Surat Anda sedang diproses. Silakan cek status pengajuan secara berkala.</p>
-                    <Button onClick={() => setSuccess(false)} className="mt-6 bg-emerald-600 hover:bg-emerald-700">
+                    <Button onClick={() => { setSuccess(false); if (user?.role === 'warga') setCurrentPage('dashboard-warga') }} className="mt-4 bg-emerald-600 hover:bg-emerald-700 mr-2">
+                      {user?.role === 'warga' ? 'Ke Dashboard' : 'Ajukan Surat Lagi'}
+                    </Button>
+                    <Button onClick={() => setSuccess(false)} variant="outline" className="mt-4">
                       Ajukan Surat Lagi
                     </Button>
                   </div>

@@ -5,7 +5,7 @@ import { useAppStore } from '@/stores/useAppStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
-import { Menu, LogIn, LogOut, Shield, Trees, UserPlus } from 'lucide-react'
+import { Menu, LogIn, LogOut, Shield, Trees, UserPlus, LayoutDashboard, MessageSquare } from 'lucide-react'
 
 const navItems = [
   { key: 'home', label: 'Home' },
@@ -75,7 +75,7 @@ export function Navbar() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-            {isAuthenticated && user?.role === 'admin' && (
+            {isAuthenticated && (user?.role === 'admin' || user?.role === 'kepala_desa') && (
               <Button
                 variant="outline"
                 size="sm"
@@ -86,11 +86,33 @@ export function Navbar() {
                 Admin Panel
               </Button>
             )}
+            {isAuthenticated && user?.role === 'warga' && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage('dashboard-warga')}
+                  className={`hidden md:flex items-center gap-2 border-emerald-200 ${currentPage === 'dashboard-warga' ? 'bg-emerald-50 text-emerald-700' : 'text-emerald-700 hover:bg-emerald-50'}`}
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCurrentPage('chat-warga')}
+                  className={`hidden md:flex items-center gap-2 ${currentPage === 'chat-warga' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Chat
+                </Button>
+              </>
+            )}
             {isAuthenticated ? (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => { logout(); setViewMode('user') }}
+                onClick={() => { logout(); setViewMode('user'); setCurrentPage('home') }}
                 className="hidden md:flex items-center gap-2 text-gray-600 hover:text-red-600"
               >
                 <LogOut className="w-4 h-4" />
@@ -153,7 +175,7 @@ export function Navbar() {
                     </button>
                   ))}
                   <div className="pt-4 border-t space-y-2">
-                    {isAuthenticated && user?.role === 'admin' && (
+                    {isAuthenticated && (user?.role === 'admin' || user?.role === 'kepala_desa') && (
                       <button
                         onClick={() => { setViewMode('admin'); setMobileMenuOpen(false) }}
                         className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-all flex items-center gap-2"
@@ -161,9 +183,27 @@ export function Navbar() {
                         <Shield className="w-4 h-4" /> Admin Panel
                       </button>
                     )}
+                    {isAuthenticated && user?.role === 'warga' && (
+                      <>
+                        <button
+                          onClick={() => { setCurrentPage('dashboard-warga'); setMobileMenuOpen(false) }}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                            currentPage === 'dashboard-warga' ? 'bg-emerald-100 text-emerald-700' : 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100'
+                          }`}
+                        >
+                          <LayoutDashboard className="w-4 h-4" /> Dashboard Warga
+                        </button>
+                        <button
+                          onClick={() => { setCurrentPage('chat-warga'); setMobileMenuOpen(false) }}
+                          className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-all flex items-center gap-2"
+                        >
+                          <MessageSquare className="w-4 h-4" /> Chat Admin
+                        </button>
+                      </>
+                    )}
                     {isAuthenticated ? (
                       <button
-                        onClick={() => { logout(); setViewMode('user'); setMobileMenuOpen(false) }}
+                        onClick={() => { logout(); setViewMode('user'); setCurrentPage('home'); setMobileMenuOpen(false) }}
                         className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-all flex items-center gap-2"
                       >
                         <LogOut className="w-4 h-4" /> Logout

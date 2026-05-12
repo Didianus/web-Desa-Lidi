@@ -17,6 +17,8 @@ import { LayananSuratPage } from '@/components/user/LayananSuratPage'
 import { KontakPage } from '@/components/user/KontakPage'
 import { LoginPage } from '@/components/user/LoginPage'
 import { RegisterPage } from '@/components/user/RegisterPage'
+import { WargaDashboard } from '@/components/user/WargaDashboard'
+import { ChatWargaPage } from '@/components/user/ChatWargaPage'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { AdminHeader } from '@/components/admin/AdminHeader'
 import { AdminDashboard } from '@/components/admin/AdminDashboard'
@@ -64,6 +66,10 @@ function UserLayout() {
         return <LayananSuratPage />
       case 'kontak':
         return <KontakPage />
+      case 'dashboard-warga':
+        return <WargaDashboard />
+      case 'chat-warga':
+        return <ChatWargaPage />
       default:
         return <HeroSection />
     }

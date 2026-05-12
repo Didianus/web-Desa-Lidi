@@ -12,6 +12,9 @@ export type UserPage =
   | 'layanan-surat'
   | 'kontak'
   | 'login'
+  | 'register'
+  | 'dashboard-warga'
+  | 'chat-warga'
 
 export type AdminPage =
   | 'dashboard'

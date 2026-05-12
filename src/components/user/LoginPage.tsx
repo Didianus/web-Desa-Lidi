@@ -36,8 +36,11 @@ export function LoginPage() {
       if (!res.ok) throw new Error(data.error || 'Login gagal')
 
       login(data.user, data.token)
-      if (data.user.role === 'admin') {
+      if (data.user.role === 'admin' || data.user.role === 'kepala_desa') {
         setViewMode('admin')
+      } else {
+        // Warga user - redirect to warga dashboard
+        setCurrentPage('dashboard-warga')
       }
       toast({ title: 'Login Berhasil', description: `Selamat datang, ${data.user.name}` })
     } catch (err: any) {

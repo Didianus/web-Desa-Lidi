@@ -100,13 +100,13 @@ export function RegisterPage() {
             </p>
             <div className="space-y-3">
               <Button
-                onClick={() => setCurrentPage('home')}
+                onClick={() => setCurrentPage('dashboard-warga')}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 py-6"
               >
-                Ke Beranda Desa
+                Ke Dashboard Warga
               </Button>
               <Button
-                onClick={() => setCurrentPage('chat')}
+                onClick={() => setCurrentPage('chat-warga')}
                 variant="outline"
                 className="w-full py-6"
               >
