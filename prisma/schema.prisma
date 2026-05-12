@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String
+  role      String   @default("admin") // admin, user
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  berita         Berita[]
+  suratPengajuan SuratPengajuan[]
+}
+
+model Berita {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  image     String?
+  authorId  String
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User @relation(fields: [authorId], references: [id])
+}
+
+model Pengumuman {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  priority  String   @default("normal") // penting, normal, biasa
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Galeri {
+  id        String   @id @default(cuid())
+  title     String
+  image     String
+  category  String   @default("umum") // umum, kegiatan, pembangunan, budaya
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SuratPengajuan {
+  id         String   @id @default(cuid())
+  nama       String
+  nik        String
+  alamat     String
+  jenisSurat String   // domisili, usaha, kelahiran, kematian
+  keterangan String?
+  status     String   @default("pending") // pending, diproses, selesai, ditolak
+  userId     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id])
+}
+
+model ProfilDesa {
+  id                  String   @id @default(cuid())
+  namaDesa            String   @default("Desa Sukamaju")
+  kecamatan           String   @default("Kecamatan Sukamaju")
+  kabupaten           String   @default("Kabupaten Sukamaju")
+  provinsi            String   @default("Jawa Barat")
+  kodePos             String   @default("12345")
+  sejarah             String   @default("Sejarah desa akan diisi oleh admin.")
+  visi                String   @default("Visi desa akan diisi oleh admin.")
+  misi                String   @default("Misi desa akan diisi oleh admin.")
+  kepalaDesa          String   @default("H. Ahmad Suryadi")
+  sambutanKepalaDesa  String   @default("Sambutan kepala desa akan diisi oleh admin.")
+  fotoKepalaDesa      String   @default("")
+  luasWilayah         Float    @default(0)
+  jumlahPenduduk      Int      @default(0)
+  jumlahKK            Int      @default(0)
+  jumlahLaki          Int      @default(0)
+  jumlahPerempuan     Int      @default(0)
+  telepon             String   @default("(021) 1234567")
+  email               String   @default("desa@sukamaju.go.id")
+  alamat              String   @default("Jl. Raya Desa No. 1, Sukamaju")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model StrukturOrganisasi {
+  id        String   @id @default(cuid())
+  nama      String
+  jabatan   String
+  foto      String?
+  urutan    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
