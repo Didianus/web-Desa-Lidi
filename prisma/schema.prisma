@@ -3,17 +3,17 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id        String   @id @default(cuid())
-  username  String   @unique
-  password  String
-  name      String
-  role      String   @default("admin") // admin, kepala_desa, warga
-  avatar    String?
+  username  String   @unique @db.VarChar(50)
+  password  String   @db.VarChar(255)
+  name      String   @db.VarChar(100)
+  role      String   @default("admin") @db.VarChar(20) // admin, kepala_desa, warga
+  avatar    String?  @db.VarChar(500)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -26,31 +26,31 @@ model User {
 }
 
 model Penduduk {
-  id           String   @id @default(cuid())
-  nik          String   @unique
-  nama         String
-  jenisKelamin String   // Laki-laki, Perempuan
-  tempatLahir  String?
+  id           String    @id @default(cuid())
+  nik          String    @unique @db.VarChar(20)
+  nama         String    @db.VarChar(100)
+  jenisKelamin String    @db.VarChar(15) // Laki-laki, Perempuan
+  tempatLahir  String?   @db.VarChar(50)
   tanggalLahir DateTime?
-  alamat       String
-  rt           String   @default("001")
-  rw           String   @default("001")
-  pekerjaan    String   @default("Belum Bekerja")
-  status       String   @default("aktif") // aktif, pindah, meninggal
-  agama        String   @default("Islam")
-  statusKawin  String   @default("Belum Kawin") // Belum Kawin, Kawin, Cerai
-  pendidikan   String   @default("SD") // SD, SMP, SMA, D3, S1, S2, S3
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  alamat       String    @db.VarChar(255)
+  rt           String    @default("001") @db.VarChar(5)
+  rw           String    @default("001") @db.VarChar(5)
+  pekerjaan    String    @default("Belum Bekerja") @db.VarChar(50)
+  status       String    @default("aktif") @db.VarChar(15) // aktif, pindah, meninggal
+  agama        String    @default("Islam") @db.VarChar(20)
+  statusKawin  String    @default("Belum Kawin") @db.VarChar(20) // Belum Kawin, Kawin, Cerai
+  pendidikan   String    @default("SD") @db.VarChar(10) // SD, SMP, SMA, D3, S1, S2, S3
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model Berita {
   id        String   @id @default(cuid())
-  title     String
-  content   String
-  image     String?
-  images    String?  // JSON array for multiple images
-  authorId  String
+  title     String   @db.VarChar(255)
+  content   String   @db.LongText
+  image     String?  @db.VarChar(500)
+  images    String?  @db.Text // JSON array for multiple images
+  authorId  String   @db.VarChar(30)
   published Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -60,9 +60,9 @@ model Berita {
 
 model Pengumuman {
   id        String   @id @default(cuid())
-  title     String
-  content   String
-  priority  String   @default("normal") // penting, normal, biasa
+  title     String   @db.VarChar(255)
+  content   String   @db.Text
+  priority  String   @default("normal") @db.VarChar(15) // penting, normal, biasa
   published Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -70,25 +70,25 @@ model Pengumuman {
 
 model Galeri {
   id        String   @id @default(cuid())
-  title     String
-  image     String
-  images    String?  // JSON array for multiple images
-  album     String   @default("Umum") // album name
-  category  String   @default("umum") // umum, kegiatan, pembangunan, budaya
+  title     String   @db.VarChar(255)
+  image     String   @db.VarChar(500)
+  images    String?  @db.Text // JSON array for multiple images
+  album     String   @default("Umum") @db.VarChar(50) // album name
+  category  String   @default("umum") @db.VarChar(20) // umum, kegiatan, pembangunan, budaya
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model SuratPengajuan {
   id         String   @id @default(cuid())
-  nama       String
-  nik        String
-  alamat     String
-  jenisSurat String   // domisili, usaha, kelahiran, kematian
-  keterangan String?
-  noSurat    String?
-  status     String   @default("pending") // pending, diproses, selesai, ditolak
-  userId     String?
+  nama       String   @db.VarChar(100)
+  nik        String   @db.VarChar(20)
+  alamat     String   @db.VarChar(255)
+  jenisSurat String   @db.VarChar(20) // domisili, usaha, kelahiran, kematian
+  keterangan String?  @db.Text
+  noSurat    String?  @db.VarChar(50)
+  status     String   @default("pending") @db.VarChar(15) // pending, diproses, selesai, ditolak
+  userId     String?  @db.VarChar(30)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -97,34 +97,34 @@ model SuratPengajuan {
 
 model ProfilDesa {
   id                  String   @id @default(cuid())
-  namaDesa            String   @default("Desa Sukamaju")
-  kecamatan           String   @default("Kecamatan Sukamaju")
-  kabupaten           String   @default("Kabupaten Sukamaju")
-  provinsi            String   @default("Jawa Barat")
-  kodePos             String   @default("12345")
-  sejarah             String   @default("Sejarah desa akan diisi oleh admin.")
-  visi                String   @default("Visi desa akan diisi oleh admin.")
-  misi                String   @default("Misi desa akan diisi oleh admin.")
-  kepalaDesa          String   @default("H. Ahmad Suryadi")
-  sambutanKepalaDesa  String   @default("Sambutan kepala desa akan diisi oleh admin.")
-  fotoKepalaDesa      String   @default("")
+  namaDesa            String   @default("Desa Sukamaju") @db.VarChar(100)
+  kecamatan           String   @default("Kecamatan Sukamaju") @db.VarChar(100)
+  kabupaten           String   @default("Kabupaten Sukamaju") @db.VarChar(100)
+  provinsi            String   @default("Jawa Barat") @db.VarChar(50)
+  kodePos             String   @default("12345") @db.VarChar(10)
+  sejarah             String   @default("Sejarah desa akan diisi oleh admin.") @db.Text
+  visi                String   @default("Visi desa akan diisi oleh admin.") @db.Text
+  misi                String   @default("Misi desa akan diisi oleh admin.") @db.Text
+  kepalaDesa          String   @default("H. Ahmad Suryadi") @db.VarChar(100)
+  sambutanKepalaDesa  String   @default("Sambutan kepala desa akan diisi oleh admin.") @db.Text
+  fotoKepalaDesa      String   @default("") @db.VarChar(500)
   luasWilayah         Float    @default(0)
   jumlahPenduduk      Int      @default(0)
   jumlahKK            Int      @default(0)
   jumlahLaki          Int      @default(0)
   jumlahPerempuan     Int      @default(0)
-  telepon             String   @default("(021) 1234567")
-  email               String   @default("desa@sukamaju.go.id")
-  alamat              String   @default("Jl. Raya Desa No. 1, Sukamaju")
+  telepon             String   @default("(021) 1234567") @db.VarChar(20)
+  email               String   @default("desa@sukamaju.go.id") @db.VarChar(100)
+  alamat              String   @default("Jl. Raya Desa No. 1, Sukamaju") @db.VarChar(255)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
 
 model StrukturOrganisasi {
   id        String   @id @default(cuid())
-  nama      String
-  jabatan   String
-  foto      String?
+  nama      String   @db.VarChar(100)
+  jabatan   String   @db.VarChar(100)
+  foto      String?  @db.VarChar(500)
   urutan    Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -132,40 +132,40 @@ model StrukturOrganisasi {
 
 model Notifikasi {
   id        String   @id @default(cuid())
-  title     String
-  message   String
-  type      String   @default("info") // info, warning, success, danger
-  userId    String?
+  title     String   @db.VarChar(255)
+  message   String   @db.Text
+  type      String   @default("info") @db.VarChar(15) // info, warning, success, danger
+  userId    String?  @db.VarChar(30)
   isRead    Boolean  @default(false)
-  link      String?
+  link      String?  @db.VarChar(500)
   createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id])
 }
 
 model Kegiatan {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
+  id          String    @id @default(cuid())
+  title       String    @db.VarChar(255)
+  description String?   @db.Text
   date        DateTime
   endDate     DateTime?
-  time        String?  // e.g. "08:00"
-  location    String?
-  category    String   @default("umum") // umum, pemerintahan, sosial, budaya, pendidikan
-  status      String   @default("akan_datang") // akan_datang, berlangsung, selesai, dibatalkan
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  time        String?   @db.VarChar(10) // e.g. "08:00"
+  location    String?   @db.VarChar(255)
+  category    String    @default("umum") @db.VarChar(20) // umum, pemerintahan, sosial, budaya, pendidikan
+  status      String    @default("akan_datang") @db.VarChar(15) // akan_datang, berlangsung, selesai, dibatalkan
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Agenda {
   id          String   @id @default(cuid())
-  title       String
-  description String?
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
   date        DateTime
-  time        String?  // e.g. "08:00 - 12:00"
-  location    String?
-  pic         String?  // penanggung jawab
-  category    String   @default("umum") // umum, rapat, kegiatan, pelayanan
+  time        String?  @db.VarChar(20) // e.g. "08:00 - 12:00"
+  location    String?  @db.VarChar(255)
+  pic         String?  @db.VarChar(100) // penanggung jawab
+  category    String   @default("umum") @db.VarChar(15) // umum, rapat, kegiatan, pelayanan
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -173,10 +173,10 @@ model Agenda {
 
 model ChatRoom {
   id        String   @id @default(cuid())
-  wargaId   String
-  adminId   String?
-  subject   String   @default("Pertanyaan Umum")
-  status    String   @default("active") // active, closed
+  wargaId   String   @db.VarChar(30)
+  adminId   String?  @db.VarChar(30)
+  subject   String   @default("Pertanyaan Umum") @db.VarChar(255)
+  status    String   @default("active") @db.VarChar(15) // active, closed
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -187,9 +187,9 @@ model ChatRoom {
 
 model ChatMessage {
   id        String   @id @default(cuid())
-  roomId    String
-  senderId  String
-  message   String
+  roomId    String   @db.VarChar(30)
+  senderId  String   @db.VarChar(30)
+  message   String   @db.Text
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
