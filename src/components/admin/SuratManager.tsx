@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useToast } from '@/hooks/use-toast'
-import { FileText, Eye, CheckCircle, XCircle, Clock, Printer, BadgeCheck } from 'lucide-react'
+import { FileText, Eye, CheckCircle, XCircle, Clock, Printer, BadgeCheck, ChevronLeft, ChevronRight, Download, FileJson, FileSpreadsheet, Search } from 'lucide-react'
 
 interface Surat {
   id: string
@@ -43,19 +45,45 @@ export function SuratManager() {
   const [detailOpen, setDetailOpen] = useState(false)
   const [printOpen, setPrintOpen] = useState(false)
   const [selected, setSelected] = useState<Surat | null>(null)
-  const [filter, setFilter] = useState('all')
+
+  // Search, Filter, Pagination
+  const [search, setSearch] = useState('')
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [filterJenis, setFilterJenis] = useState('semua')
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
+  const limit = 10
+
+  const totalPages = Math.ceil(total / limit)
 
   const fetchData = () => {
-    const url = filter === 'all' ? '/api/surat?limit=50' : `/api/surat?status=${filter}&limit=50`
-    fetch(url).then(r => r.json()).then(d => setList(d.surat || [])).catch(() => {}).finally(() => setLoading(false))
+    const params = new URLSearchParams()
+    if (search) params.set('search', search)
+    if (filterStatus !== 'all') params.set('status', filterStatus)
+    if (filterJenis !== 'semua') params.set('jenisSurat', filterJenis)
+    params.set('page', String(page))
+    params.set('limit', String(limit))
+
+    fetch(`/api/surat?${params}`)
+      .then(r => r.json())
+      .then(d => { setList(d.surat || []); setTotal(d.total || 0); setLoading(false) })
+      .catch(() => { setLoading(false) })
   }
 
-  useEffect(() => { fetchData() }, [filter])
+  useEffect(() => { fetchData() }, [page, filterStatus, filterJenis])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(1)
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [search])
 
   const updateStatus = async (id: string, status: string) => {
     try {
       await fetch(`/api/surat/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) })
       toast({ title: 'Berhasil', description: `Status surat diubah ke ${statusConfig[status]?.label || status}` })
+      setLoading(true)
       fetchData(); setDetailOpen(false)
     } catch { toast({ title: 'Error', description: 'Gagal mengubah status', variant: 'destructive' }) }
   }
@@ -64,8 +92,34 @@ export function SuratManager() {
     if (!confirm('Yakin ingin menghapus?')) return
     try {
       await fetch(`/api/surat/${id}`, { method: 'DELETE' })
-      toast({ title: 'Berhasil', description: 'Surat berhasil dihapus' }); fetchData()
+      toast({ title: 'Berhasil', description: 'Surat berhasil dihapus' })
+      setLoading(true)
+      fetchData()
     } catch { toast({ title: 'Error', description: 'Gagal menghapus', variant: 'destructive' }) }
+  }
+
+  const handleExport = async (format: string) => {
+    try {
+      const res = await fetch(`/api/export?type=surat&format=${format}`)
+      if (format === 'csv') {
+        const text = await res.text()
+        const blob = new Blob([text], { type: 'text/csv' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url; a.download = `surat_${new Date().toISOString().split('T')[0]}.csv`; a.click()
+        URL.revokeObjectURL(url)
+      } else {
+        const data = await res.json()
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url; a.download = `surat_${new Date().toISOString().split('T')[0]}.json`; a.click()
+        URL.revokeObjectURL(url)
+      }
+      toast({ title: 'Berhasil', description: `Data berhasil diexport sebagai ${format.toUpperCase()}` })
+    } catch {
+      toast({ title: 'Error', description: 'Gagal mengexport data', variant: 'destructive' })
+    }
   }
 
   const handlePrint = (surat: Surat) => {
@@ -82,21 +136,108 @@ export function SuratManager() {
         body: JSON.stringify({ status: 'diproses', noSurat }),
       })
       toast({ title: 'Diverifikasi', description: `Surat diverifikasi dengan No: ${noSurat}` })
+      setLoading(true)
       fetchData(); setDetailOpen(false)
     } catch { toast({ title: 'Error', description: 'Gagal memverifikasi', variant: 'destructive' }) }
+  }
+
+  const handleDownloadPDF = () => {
+    const printContent = document.getElementById('surat-print')
+    if (!printContent) return
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Surat</title>
+          <style>
+            @page { size: A4; margin: 20mm; }
+            body { font-family: 'Times New Roman', serif; color: black; }
+            @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `)
+    printWindow.document.close()
+    printWindow.focus()
+    setTimeout(() => { printWindow.print() }, 500)
+  }
+
+  const handlePageChange = (newPage: number) => {
+    setLoading(true)
+    setPage(newPage)
+  }
+
+  const handleStatusFilter = (status: string) => {
+    setLoading(true)
+    setFilterStatus(status)
+    setPage(1)
+  }
+
+  const handleJenisFilter = (jenis: string) => {
+    setLoading(true)
+    setFilterJenis(jenis)
+    setPage(1)
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div><h1 className="text-2xl font-bold text-gray-900 dark:text-white">Kelola Surat</h1><p className="text-gray-500 dark:text-gray-400 text-sm">Kelola pengajuan surat warga</p></div>
-        <div className="flex gap-2 flex-wrap">
-          {['all', 'pending', 'diproses', 'selesai', 'ditolak'].map(s => (
-            <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filter === s ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border dark:border-gray-700'}`}>
-              {s === 'all' ? 'Semua' : statusConfig[s]?.label || s}
-            </button>
-          ))}
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 dark:bg-gray-800 dark:border-gray-700">
+                <Download className="w-4 h-4" /> Export
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => handleExport('csv')}>
+                <FileSpreadsheet className="w-4 h-4 mr-2" /> Export CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport('json')}>
+                <FileJson className="w-4 h-4 mr-2" /> Export JSON
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+      </div>
+
+      {/* Search and Filter */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Cari berdasarkan nama atau NIK..."
+            className="pl-9 dark:bg-gray-800 dark:border-gray-700"
+          />
+        </div>
+        <Select value={filterJenis} onValueChange={handleJenisFilter}>
+          <SelectTrigger className="w-full sm:w-[180px] dark:bg-gray-800 dark:border-gray-700">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="semua">Semua Jenis</SelectItem>
+            <SelectItem value="domisili">Surat Domisili</SelectItem>
+            <SelectItem value="usaha">Surat Usaha</SelectItem>
+            <SelectItem value="kelahiran">Surat Kelahiran</SelectItem>
+            <SelectItem value="kematian">Surat Kematian</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Status Filter */}
+      <div className="flex gap-2 flex-wrap">
+        {['all', 'pending', 'diproses', 'selesai', 'ditolak'].map(s => (
+          <button key={s} onClick={() => handleStatusFilter(s)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filterStatus === s ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border dark:border-gray-700'}`}>
+            {s === 'all' ? 'Semua' : statusConfig[s]?.label || s}
+          </button>
+        ))}
       </div>
 
       <Card className="border-0 shadow-md dark:bg-gray-900 dark:border dark:border-gray-800">
@@ -147,6 +288,38 @@ export function SuratManager() {
         </CardContent>
       </Card>
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Menampilkan {((page - 1) * limit) + 1} - {Math.min(page * limit, total)} dari {total} data
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => handlePageChange(page - 1)}
+              className="gap-1 dark:bg-gray-800 dark:border-gray-700"
+            >
+              <ChevronLeft className="w-4 h-4" /> Prev
+            </Button>
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+              Hal {page} / {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => handlePageChange(page + 1)}
+              className="gap-1 dark:bg-gray-800 dark:border-gray-700"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Detail Dialog */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
         <DialogContent className="max-w-lg dark:bg-gray-900">
@@ -188,7 +361,7 @@ export function SuratManager() {
           <DialogHeader><DialogTitle className="dark:text-white">Cetak Surat</DialogTitle></DialogHeader>
           {selected && (
             <div className="pt-4">
-              <div id="surat-print" className="bg-white text-black p-8 rounded-lg border space-y-6">
+              <div id="surat-print" className="bg-white text-black p-8 rounded-lg border space-y-6" style={{ fontFamily: "'Times New Roman', serif" }}>
                 {/* KOP SURAT */}
                 <div className="text-center border-b-4 border-black pb-4">
                   <h2 className="text-lg font-bold">PEMERINTAH KOTA CIMAHI</h2>
@@ -234,13 +407,32 @@ export function SuratManager() {
                 </div>
               </div>
               <div className="flex gap-2 mt-4">
-                <Button onClick={() => window.print()} className="flex-1 bg-emerald-600 hover:bg-emerald-700 gap-2"><Printer className="w-4 h-4" />Cetak</Button>
-                <Button variant="outline" onClick={() => setPrintOpen(false)} className="flex-1">Tutup</Button>
+                <Button onClick={handleDownloadPDF} className="flex-1 bg-emerald-600 hover:bg-emerald-700 gap-2"><Printer className="w-4 h-4" /> Download PDF</Button>
+                <Button variant="outline" onClick={() => window.print()} className="flex-1 gap-2 dark:bg-gray-800 dark:border-gray-700"><Printer className="w-4 h-4" /> Cetak</Button>
+                <Button variant="outline" onClick={() => setPrintOpen(false)} className="flex-1 dark:bg-gray-800 dark:border-gray-700">Tutup</Button>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Print-specific CSS */}
+      <style jsx global>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          #surat-print, #surat-print * {
+            visibility: visible;
+          }
+          #surat-print {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+          }
+        }
+      `}</style>
     </div>
   )
 }

@@ -12,13 +12,17 @@ model User {
   username  String   @unique
   password  String
   name      String
-  role      String   @default("admin") // admin, kepala_desa
+  role      String   @default("admin") // admin, kepala_desa, warga
   avatar    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  berita         Berita[]
-  suratPengajuan SuratPengajuan[]
+  berita            Berita[]
+  suratPengajuan    SuratPengajuan[]
+  chatMessages      ChatMessage[]
+  notifications     Notifikasi[]
+  chatRoomsAsWarga  ChatRoom[]  @relation("WargaRooms")
+  chatRoomsAsAdmin  ChatRoom[]  @relation("AdminRooms")
 }
 
 model Penduduk {
@@ -45,6 +49,7 @@ model Berita {
   title     String
   content   String
   image     String?
+  images    String?  // JSON array for multiple images
   authorId  String
   published Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -67,6 +72,8 @@ model Galeri {
   id        String   @id @default(cuid())
   title     String
   image     String
+  images    String?  // JSON array for multiple images
+  album     String   @default("Umum") // album name
   category  String   @default("umum") // umum, kegiatan, pembangunan, budaya
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -121,4 +128,71 @@ model StrukturOrganisasi {
   urutan    Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Notifikasi {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  type      String   @default("info") // info, warning, success, danger
+  userId    String?
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+}
+
+model Kegiatan {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  endDate     DateTime?
+  time        String?  // e.g. "08:00"
+  location    String?
+  category    String   @default("umum") // umum, pemerintahan, sosial, budaya, pendidikan
+  status      String   @default("akan_datang") // akan_datang, berlangsung, selesai, dibatalkan
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Agenda {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  time        String?  // e.g. "08:00 - 12:00"
+  location    String?
+  pic         String?  // penanggung jawab
+  category    String   @default("umum") // umum, rapat, kegiatan, pelayanan
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChatRoom {
+  id        String   @id @default(cuid())
+  wargaId   String
+  adminId   String?
+  subject   String   @default("Pertanyaan Umum")
+  status    String   @default("active") // active, closed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  warga   User          @relation("WargaRooms", fields: [wargaId], references: [id])
+  admin   User?         @relation("AdminRooms", fields: [adminId], references: [id])
+  messages ChatMessage[]
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  roomId    String
+  senderId  String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  room   ChatRoom @relation(fields: [roomId], references: [id])
+  sender User     @relation(fields: [senderId], references: [id])
 }

@@ -159,7 +159,105 @@ async function main() {
     })
   }
 
-  console.log('✅ Seed data berhasil dimasukkan! (termasuk 20 data penduduk & kepala_desa user)')
+  // Create notifikasi
+  const notifikasiData = [
+    { title: 'Surat Baru Masuk', message: 'Ada pengajuan surat baru dari Budi Santoso', type: 'info', userId: admin.id, isRead: false },
+    { title: 'Kegiatan Hari Ini', message: 'Musyawarah Desa akan dilaksanakan hari ini di Balai Desa', type: 'warning', isRead: false },
+    { title: 'Surat Selesai', message: 'Surat domisili atas nama Siti Aminah telah selesai diproses', type: 'success', isRead: true },
+    { title: 'Peringatan Sistem', message: 'Backup database belum dilakukan minggu ini', type: 'danger', isRead: false },
+    { title: 'Chat Baru', message: 'Warga Dewi Lestari mengirim pesan baru', type: 'info', isRead: false },
+  ]
+  for (let i = 0; i < notifikasiData.length; i++) {
+    await prisma.notifikasi.upsert({
+      where: { id: `notifikasi-${i + 1}` },
+      update: {},
+      create: { id: `notifikasi-${i + 1}`, ...notifikasiData[i] },
+    })
+  }
+
+  // Create kegiatan
+  const kegiatanData = [
+    { title: 'Musyawarah Desa (Musdes)', description: 'Musyawarah desa untuk membahas program kerja tahun 2024', date: new Date('2025-03-15'), endDate: new Date('2025-03-15'), time: '09:00', location: 'Balai Desa', category: 'pemerintahan', status: 'akan_datang' },
+    { title: 'Posyandu Balita', description: 'Kegiatan posyandu rutin untuk penimbangan balita dan imunisasi', date: new Date('2025-03-10'), endDate: new Date('2025-03-10'), time: '08:00', location: 'Puskesmas Desa', category: 'sosial', status: 'akan_datang' },
+    { title: 'Festival Budaya Desa', description: 'Pesta kesenian dan budaya desa tahunan', date: new Date('2025-03-20'), endDate: new Date('2025-03-22'), time: '08:00', location: 'Lapangan Desa', category: 'budaya', status: 'akan_datang' },
+    { title: 'Pelatihan UMKM Digital', description: 'Pelatihan pemasaran digital untuk UMKM desa', date: new Date('2025-03-05'), endDate: new Date('2025-03-06'), time: '09:00', location: 'Aula Desa', category: 'pendidikan', status: 'akan_datang' },
+    { title: 'Kerja Bakti Bersih Desa', description: 'Kegiatan gotong royong membersihkan lingkungan desa', date: new Date('2025-03-08'), time: '07:00', location: 'Seluruh wilayah desa', category: 'sosial', status: 'akan_datang' },
+    { title: 'Rapat RT/RW', description: 'Rapat koordinasi RT/RW se-Desa Sukamaju', date: new Date('2025-02-28'), time: '19:00', location: 'Balai Desa', category: 'pemerintahan', status: 'selesai' },
+    { title: 'Vaksinasi COVID-19', description: 'Program vaksinasi booster untuk warga desa', date: new Date('2025-02-20'), time: '08:00', location: 'Puskesmas Desa', category: 'sosial', status: 'selesai' },
+    { title: 'Upacara HUT RI', description: 'Upacara peringatan Hari Kemerdekaan RI', date: new Date('2025-02-17'), time: '07:00', location: 'Lapangan Desa', category: 'umum', status: 'selesai' },
+  ]
+  for (let i = 0; i < kegiatanData.length; i++) {
+    await prisma.kegiatan.upsert({
+      where: { id: `kegiatan-${i + 1}` },
+      update: {},
+      create: { id: `kegiatan-${i + 1}`, ...kegiatanData[i] },
+    })
+  }
+
+  // Create agenda
+  const agendaData = [
+    { title: 'Pelayanan Surat Mingguan', description: 'Pelayanan pembuatan surat keterangan', date: new Date('2025-03-03'), time: '08:00 - 15:00', location: 'Kantor Desa', pic: 'Rina Wulandari', category: 'pelayanan', published: true },
+    { title: 'Rapat Koordinasi Perangkat Desa', description: 'Rapat rutin perangkat desa', date: new Date('2025-03-04'), time: '09:00 - 11:00', location: 'Ruang Rapat Desa', pic: 'H. Ahmad Suryadi', category: 'rapat', published: true },
+    { title: 'Senam Sehat Bersama', description: 'Kegiatan senam pagi rutin setiap minggu', date: new Date('2025-03-05'), time: '06:00 - 07:00', location: 'Lapangan Desa', pic: 'Yuni Astuti', category: 'kegiatan', published: true },
+    { title: 'Konsultasi Hukum Gratis', description: 'Konsultasi hukum gratis untuk warga', date: new Date('2025-03-07'), time: '09:00 - 12:00', location: 'Kantor Desa', pic: 'Dedi Mulyadi', category: 'pelayanan', published: true },
+    { title: 'Jadwal Imunisasi', description: 'Imunisasi dasar untuk balita', date: new Date('2025-03-12'), time: '08:00 - 12:00', location: 'Puskesmas Desa', pic: 'Yuni Astuti', category: 'kegiatan', published: true },
+    { title: 'Rapat BPBD', description: 'Rapat badan penanggulangan bencana daerah', date: new Date('2025-03-14'), time: '14:00 - 16:00', location: 'Balai Desa', pic: 'Agus Riyanto', category: 'rapat', published: false },
+    { title: 'Lomba 17 Agustus', description: 'Berbagai lomba memperingati HUT RI', date: new Date('2025-03-17'), time: '07:00 - 17:00', location: 'Lapangan Desa', pic: 'Siti Nurhaliza', category: 'kegiatan', published: true },
+    { title: 'Penyaluran Bansos', description: 'Penyaluran bantuan sosial tahap I', date: new Date('2025-03-25'), time: '08:00 - 14:00', location: 'Balai Desa', pic: 'Ir. Bambang Sutrisno', category: 'umum', published: true },
+  ]
+  for (let i = 0; i < agendaData.length; i++) {
+    await prisma.agenda.upsert({
+      where: { id: `agenda-${i + 1}` },
+      update: {},
+      create: { id: `agenda-${i + 1}`, ...agendaData[i] },
+    })
+  }
+
+  // Create warga users for chat
+  const warga1 = await prisma.user.upsert({
+    where: { username: 'warga_budi' },
+    update: {},
+    create: { username: 'warga_budi', password: hashedPassword, name: 'Budi Santoso', role: 'warga' },
+  })
+
+  const warga2 = await prisma.user.upsert({
+    where: { username: 'warga_dewi' },
+    update: {},
+    create: { username: 'warga_dewi', password: hashedPassword, name: 'Dewi Lestari', role: 'warga' },
+  })
+
+  // Chat room 1
+  const room1 = await prisma.chatRoom.upsert({
+    where: { id: 'chat-room-1' },
+    update: {},
+    create: { id: 'chat-room-1', wargaId: warga1.id, adminId: admin.id, subject: 'Pertanyaan tentang surat domisili', status: 'active' },
+  })
+
+  // Chat room 2
+  const room2 = await prisma.chatRoom.upsert({
+    where: { id: 'chat-room-2' },
+    update: {},
+    create: { id: 'chat-room-2', wargaId: warga2.id, subject: 'Informasi jadwal posyandu', status: 'active' },
+  })
+
+  // Messages for room 1
+  const messages1 = [
+    { roomId: room1.id, senderId: warga1.id, message: 'Selamat pagi, saya ingin bertanya tentang persyaratan pembuatan surat domisili.', isRead: true },
+    { roomId: room1.id, senderId: admin.id, message: 'Selamat pagi Pak Budi. Untuk surat domisili, Anda perlu membawa KTP asli, KK, dan surat pengantar dari RT/RW setempat.', isRead: true },
+    { roomId: room1.id, senderId: warga1.id, message: 'Baik, terima kasih. Apakah bisa diurus hari ini?', isRead: true },
+    { roomId: room1.id, senderId: admin.id, message: 'Bisa Pak, kantor desa buka sampai pukul 15:00 WIB. Silakan datang dengan membawa berkas yang diperlukan.', isRead: false },
+  ]
+
+  const messages2 = [
+    { roomId: room2.id, senderId: warga2.id, message: 'Selamat siang, saya ingin menanyakan jadwal posyandu bulan ini.', isRead: true },
+    { roomId: room2.id, senderId: admin.id, message: 'Siang Bu Dewi. Posyandu rutin dilaksanakan setiap hari Rabu minggu ke-2 dan ke-4.', isRead: false },
+  ]
+
+  for (const msg of [...messages1, ...messages2]) {
+    await prisma.chatMessage.create({ data: msg })
+  }
+
+  console.log('✅ Seed data berhasil dimasukkan! (termasuk 20 data penduduk, kepala_desa user, notifikasi, kegiatan, agenda, chat rooms & messages)')
 }
 
 main()

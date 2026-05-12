@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useAppStore } from '@/stores/useAppStore'
-import { Newspaper, Bell, Image, FileText, Users, Home, Clock, CheckCircle, XCircle, TrendingUp, Activity } from 'lucide-react'
+import { Newspaper, Bell, Image, FileText, Users, Home, Clock, CheckCircle, XCircle, TrendingUp, Activity, CalendarDays, MessageCircle, CalendarCheck } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, AreaChart, Area } from 'recharts'
 
 const COLORS = ['#059669', '#0d9488', '#0891b2', '#d97706', '#dc2626', '#7c3aed', '#db2777', '#ea580c']
@@ -24,6 +24,10 @@ export function AdminDashboard() {
     { label: 'Berita Desa', value: stats?.totalBerita || 0, icon: Newspaper, color: 'text-teal-600', bg: 'bg-teal-50 dark:bg-teal-900/30', trend: '+3' },
     { label: 'Surat Masuk', value: stats?.suratPending || 0, icon: FileText, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30', trend: '+5' },
     { label: 'Pengumuman Aktif', value: stats?.totalPengumuman || 0, icon: Bell, color: 'text-cyan-600', bg: 'bg-cyan-50 dark:bg-cyan-900/30', trend: '+1' },
+    { label: 'Kegiatan', value: stats?.totalKegiatan || 0, icon: CalendarDays, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/30', trend: `${stats?.kegiatanAkanDatang || 0} mendatang` },
+    { label: 'Agenda', value: stats?.totalAgenda || 0, icon: CalendarCheck, color: 'text-pink-600', bg: 'bg-pink-50 dark:bg-pink-900/30', trend: `${stats?.agendaToday || 0} hari ini` },
+    { label: 'Chat Aktif', value: stats?.chatRoomsActive || 0, icon: MessageCircle, color: 'text-indigo-600', bg: 'bg-indigo-50 dark:bg-indigo-900/30', trend: `${stats?.totalChatRooms || 0} total` },
+    { label: 'Notifikasi Baru', value: stats?.notifikasiUnread || 0, icon: Bell, color: 'text-rose-600', bg: 'bg-rose-50 dark:bg-rose-900/30', trend: 'baru' },
   ]
 
   const suratCards = [
@@ -55,6 +59,7 @@ export function AdminDashboard() {
 
       {/* Main Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Row 1 - Original 4 cards */}
         {cards.map((card, i) => (
           <Card key={i} className="border-0 shadow-md dark:bg-gray-900 dark:border dark:border-gray-800">
             <CardContent className="p-5">
@@ -72,6 +77,50 @@ export function AdminDashboard() {
           </Card>
         ))}
       </div>
+      {/* Row 2 - New cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {cards.slice(4).map((card, i) => (
+          <Card key={i + 4} className="border-0 shadow-md dark:bg-gray-900 dark:border dark:border-gray-800">
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div className={`w-10 h-10 ${card.bg} rounded-lg flex items-center justify-center`}>
+                  <card.icon className={`w-5 h-5 ${card.color}`} />
+                </div>
+                <Badge variant="outline" className="text-xs text-emerald-600 border-emerald-200 dark:border-emerald-800">
+                  {card.trend}
+                </Badge>
+              </div>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{card.value}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{card.label}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Upcoming Kegiatan */}
+      {(stats?.recentKegiatan || []).length > 0 && (
+        <Card className="border-0 shadow-md dark:bg-gray-900 dark:border dark:border-gray-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <CalendarDays className="w-5 h-5 text-purple-600" /> Kegiatan Mendatang
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {(stats?.recentKegiatan || []).map((k: any, i: number) => (
+                <div key={i} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <p className="font-medium text-sm text-gray-900 dark:text-white">{k.title}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {new Date(k.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {k.time && ` • ${k.time}`}
+                  </p>
+                  {k.location && <p className="text-xs text-gray-400 mt-0.5">📍 {k.location}</p>}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Charts Row */}
       <div className="grid lg:grid-cols-3 gap-6">
@@ -170,31 +219,28 @@ export function AdminDashboard() {
           </CardContent>
         </Card>
 
-        {/* Recent Surat */}
+        {/* Upcoming Agenda */}
         <Card className="border-0 shadow-md dark:bg-gray-900 dark:border dark:border-gray-800">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold text-gray-900 dark:text-white">Surat Terbaru</CardTitle>
+            <CardTitle className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <CalendarCheck className="w-5 h-5 text-pink-600" /> Agenda Mendatang
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {(stats?.recentSurat || []).map((s: any, i: number) => {
-              const statusColors: Record<string, string> = {
-                pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-                diproses: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-                selesai: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-                ditolak: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-              }
-              return (
-                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{s.nama}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{s.jenisSurat}</p>
-                  </div>
-                  <Badge className={`${statusColors[s.status] || ''} text-[10px]`}>{s.status}</Badge>
+            {(stats?.upcomingAgenda || []).map((a: any, i: number) => (
+              <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{a.title}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {new Date(a.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                    {a.time && ` • ${a.time}`}
+                  </p>
                 </div>
-              )
-            })}
-            {(!stats?.recentSurat || stats.recentSurat.length === 0) && (
-              <p className="text-sm text-gray-400 text-center py-4">Belum ada surat</p>
+                <Badge className="bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400 text-[10px] capitalize">{a.category}</Badge>
+              </div>
+            ))}
+            {(!stats?.upcomingAgenda || stats.upcomingAgenda.length === 0) && (
+              <p className="text-sm text-gray-400 text-center py-4">Belum ada agenda</p>
             )}
           </CardContent>
         </Card>

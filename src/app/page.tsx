@@ -26,6 +26,11 @@ import { PendudukManager } from '@/components/admin/PendudukManager'
 import { SuratManager } from '@/components/admin/SuratManager'
 import { LaporanPage } from '@/components/admin/LaporanPage'
 import { PengaturanPage } from '@/components/admin/PengaturanPage'
+import { KegiatanPage } from '@/components/user/KegiatanPage'
+import { KegiatanManager } from '@/components/admin/KegiatanManager'
+import { AgendaManager } from '@/components/admin/AgendaManager'
+import { ChatWargaManager } from '@/components/admin/ChatWargaManager'
+import { NotifikasiManager } from '@/components/admin/NotifikasiManager'
 
 function UserLayout() {
   const { currentPage } = useAppStore()
@@ -50,6 +55,8 @@ function UserLayout() {
         return <BeritaDetail />
       case 'pengumuman':
         return <PengumumanPage />
+      case 'kegiatan':
+        return <KegiatanPage />
       case 'galeri':
         return <GaleriPage />
       case 'layanan-surat':
@@ -98,6 +105,14 @@ function AdminLayout() {
         return <PendudukManager />
       case 'surat':
         return <SuratManager />
+      case 'kegiatan':
+        return <KegiatanManager />
+      case 'agenda':
+        return <AgendaManager />
+      case 'chat':
+        return <ChatWargaManager />
+      case 'notifikasi':
+        return <NotifikasiManager />
       case 'laporan':
         return <LaporanPage />
       case 'pengaturan':

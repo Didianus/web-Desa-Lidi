@@ -7,6 +7,7 @@ export type UserPage =
   | 'berita'
   | 'berita-detail'
   | 'pengumuman'
+  | 'kegiatan'
   | 'galeri'
   | 'layanan-surat'
   | 'kontak'
@@ -19,6 +20,10 @@ export type AdminPage =
   | 'galeri'
   | 'penduduk'
   | 'surat'
+  | 'kegiatan'
+  | 'agenda'
+  | 'chat'
+  | 'notifikasi'
   | 'laporan'
   | 'pengaturan'
 

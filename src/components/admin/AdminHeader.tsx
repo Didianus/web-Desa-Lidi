@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
@@ -7,8 +8,21 @@ import { Moon, Sun, Bell, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 export function AdminHeader() {
-  const { adminDarkMode, setAdminDarkMode, currentAdminPage } = useAppStore()
+  const { adminDarkMode, setAdminDarkMode, currentAdminPage, setCurrentAdminPage } = useAppStore()
   const { user } = useAuthStore()
+  const [unreadNotif, setUnreadNotif] = useState(0)
+
+  useEffect(() => {
+    const fetchUnread = () => {
+      fetch('/api/notifikasi?isRead=false&limit=1')
+        .then(r => r.json())
+        .then(d => setUnreadNotif(d.total || 0))
+        .catch(() => {})
+    }
+    fetchUnread()
+    const interval = setInterval(fetchUnread, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   const pageTitles: Record<string, string> = {
     dashboard: 'Dashboard',
@@ -17,6 +31,10 @@ export function AdminHeader() {
     galeri: 'Kelola Galeri',
     penduduk: 'Kelola Penduduk',
     surat: 'Kelola Surat',
+    kegiatan: 'Kalender Kegiatan',
+    agenda: 'Agenda Desa',
+    chat: 'Chat Warga',
+    notifikasi: 'Notifikasi',
     laporan: 'Laporan',
     pengaturan: 'Pengaturan',
   }
@@ -43,9 +61,18 @@ export function AdminHeader() {
         </div>
 
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative text-gray-500 dark:text-gray-400">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative"
+          onClick={() => setCurrentAdminPage('notifikasi')}
+        >
           <Bell className="w-5 h-5" />
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">3</span>
+          {unreadNotif > 0 && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              {unreadNotif > 9 ? '9+' : unreadNotif}
+            </span>
+          )}
         </Button>
 
         {/* Dark Mode Toggle */}

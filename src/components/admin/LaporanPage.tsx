@@ -4,13 +4,16 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAppStore } from '@/stores/useAppStore'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line } from 'recharts'
-import { Users, FileText, TrendingUp, Download } from 'lucide-react'
+import { Users, FileText, TrendingUp, Download, FileJson, FileSpreadsheet, Printer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { useToast } from '@/hooks/use-toast'
 
 const COLORS = ['#059669', '#0d9488', '#0891b2', '#d97706', '#dc2626', '#7c3aed', '#db2777', '#ea580c', '#2563eb', '#65a30d']
 
 export function LaporanPage() {
   const { adminDarkMode } = useAppStore()
+  const { toast } = useToast()
   const [stats, setStats] = useState<any>(null)
 
   useEffect(() => {
@@ -36,6 +39,36 @@ export function LaporanPage() {
     { label: 'Total Surat', value: stats?.totalSurat || 0, icon: FileText, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30' },
   ]
 
+  const handleExport = async (format: string) => {
+    try {
+      const types = ['penduduk', 'surat', 'kegiatan']
+      for (const type of types) {
+        const res = await fetch(`/api/export?type=${type}&format=${format}`)
+        if (!res.ok) continue
+        if (format === 'csv') {
+          const text = await res.text()
+          const blob = new Blob([text], { type: 'text/csv' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url; a.download = `${type}_${new Date().toISOString().split('T')[0]}.csv`; a.click()
+          URL.revokeObjectURL(url)
+        } else {
+          const data = await res.json()
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url; a.download = `${type}_${new Date().toISOString().split('T')[0]}.json`; a.click()
+          URL.revokeObjectURL(url)
+        }
+      }
+      toast({ title: 'Berhasil', description: `Data berhasil diexport sebagai ${format.toUpperCase()}` })
+    } catch { toast({ title: 'Error', description: 'Gagal mengexport data', variant: 'destructive' }) }
+  }
+
+  const handlePrintPDF = () => {
+    window.print()
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -43,9 +76,24 @@ export function LaporanPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm">Ringkasan data dan statistik desa</p>
         </div>
-        <Button variant="outline" className="gap-2 dark:border-gray-700">
-          <Download className="w-4 h-4" /> Export PDF
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2 dark:border-gray-700">
+              <Download className="w-4 h-4" /> Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => handleExport('csv')}>
+              <FileSpreadsheet className="w-4 h-4 mr-2" /> Export CSV (Excel)
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleExport('json')}>
+              <FileJson className="w-4 h-4 mr-2" /> Export JSON
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handlePrintPDF}>
+              <Printer className="w-4 h-4 mr-2" /> Print PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Summary Cards */}
@@ -179,6 +227,10 @@ export function LaporanPage() {
               { label: 'Foto Galeri', value: stats?.totalGaleri || 0 },
               { label: 'Surat Selesai', value: stats?.suratSelesai || 0 },
               { label: 'Surat Pending', value: stats?.suratPending || 0 },
+              { label: 'Total Kegiatan', value: stats?.totalKegiatan || 0 },
+              { label: 'Total Agenda', value: stats?.totalAgenda || 0 },
+              { label: 'Chat Aktif', value: stats?.chatRoomsActive || 0 },
+              { label: 'Notifikasi Baru', value: stats?.notifikasiUnread || 0 },
             ].map((item, i) => (
               <div key={i} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <p className="text-sm text-gray-500 dark:text-gray-400">{item.label}</p>

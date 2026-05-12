@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
@@ -8,10 +9,13 @@ import { Badge } from '@/components/ui/badge'
 import {
   LayoutDashboard,
   Newspaper,
-  Bell,
+  Megaphone,
   Image,
   Users,
   FileText,
+  CalendarDays,
+  CalendarCheck,
+  MessageCircle,
   BarChart3,
   Settings,
   LogOut,
@@ -25,10 +29,13 @@ import {
 const menuItems = [
   { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { key: 'berita', label: 'Kelola Berita', icon: Newspaper },
-  { key: 'pengumuman', label: 'Kelola Pengumuman', icon: Bell },
+  { key: 'pengumuman', label: 'Kelola Pengumuman', icon: Megaphone },
   { key: 'galeri', label: 'Kelola Galeri', icon: Image },
   { key: 'penduduk', label: 'Kelola Penduduk', icon: Users },
   { key: 'surat', label: 'Kelola Surat', icon: FileText },
+  { key: 'kegiatan', label: 'Kalender Kegiatan', icon: CalendarDays },
+  { key: 'agenda', label: 'Agenda Desa', icon: CalendarCheck },
+  { key: 'chat', label: 'Chat Warga', icon: MessageCircle },
   { key: 'laporan', label: 'Laporan', icon: BarChart3 },
   { key: 'pengaturan', label: 'Pengaturan', icon: Settings },
 ] as const
@@ -41,6 +48,23 @@ const roleBadge: Record<string, { label: string; color: string }> = {
 export function AdminSidebar() {
   const { currentAdminPage, setCurrentAdminPage, setViewMode, adminSidebarOpen, setAdminSidebarOpen } = useAppStore()
   const { logout, user } = useAuthStore()
+  const [unreadChat, setUnreadChat] = useState(0)
+
+  useEffect(() => {
+    const fetchUnread = () => {
+      fetch('/api/chat?status=active')
+        .then(r => r.json())
+        .then(d => {
+          const rooms = d.rooms || d.chatRooms || []
+          // Count rooms without assigned admin as "unread"
+          setUnreadChat(rooms.filter((r: any) => !r.adminId).length)
+        })
+        .catch(() => {})
+    }
+    fetchUnread()
+    const interval = setInterval(fetchUnread, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   const roleInfo = roleBadge[user?.role || 'admin'] || roleBadge.admin
 
@@ -104,6 +128,9 @@ export function AdminSidebar() {
           >
             <item.icon className="w-5 h-5 shrink-0" />
             {adminSidebarOpen && <span>{item.label}</span>}
+            {adminSidebarOpen && item.key === 'chat' && unreadChat > 0 && (
+              <Badge className="bg-red-500 text-white text-[10px] px-1.5 py-0 ml-auto">{unreadChat}</Badge>
+            )}
           </button>
         ))}
       </nav>

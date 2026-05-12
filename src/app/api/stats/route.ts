@@ -10,6 +10,16 @@ export async function GET() {
       pendudukPindah, pendudukMeninggal,
       profil,
       recentSurat, recentBerita,
+      // New kegiatan stats
+      totalKegiatan, kegiatanAkanDatang, kegiatanBerlangsung, kegiatanSelesai,
+      // New agenda stats
+      totalAgenda, agendaToday,
+      // New chat stats
+      totalChatRooms, chatRoomsActive,
+      // New notifikasi stats
+      totalNotifikasi, notifikasiUnread,
+      // Recent kegiatan & upcoming agenda
+      recentKegiatan, upcomingAgenda,
     ] = await Promise.all([
       db.berita.count(),
       db.pengumuman.count({ where: { published: true } }),
@@ -28,6 +38,38 @@ export async function GET() {
       db.profilDesa.findFirst(),
       db.suratPengajuan.findMany({ orderBy: { createdAt: 'desc' }, take: 5 }),
       db.berita.findMany({ orderBy: { createdAt: 'desc' }, take: 5, include: { author: { select: { name: true } } } }),
+      // Kegiatan stats
+      db.kegiatan.count(),
+      db.kegiatan.count({ where: { status: 'akan_datang' } }),
+      db.kegiatan.count({ where: { status: 'berlangsung' } }),
+      db.kegiatan.count({ where: { status: 'selesai' } }),
+      // Agenda stats
+      db.agenda.count(),
+      db.agenda.count({
+        where: {
+          date: {
+            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+            lt: new Date(new Date().setHours(23, 59, 59, 999)),
+          },
+        },
+      }),
+      // Chat stats
+      db.chatRoom.count(),
+      db.chatRoom.count({ where: { status: 'active' } }),
+      // Notifikasi stats
+      db.notifikasi.count(),
+      db.notifikasi.count({ where: { isRead: false } }),
+      // Recent kegiatan (last 5)
+      db.kegiatan.findMany({ orderBy: { date: 'desc' }, take: 5 }),
+      // Upcoming agenda (next 5)
+      db.agenda.findMany({
+        where: {
+          date: { gte: new Date() },
+          published: true,
+        },
+        orderBy: { date: 'asc' },
+        take: 5,
+      }),
     ])
 
     // Get pekerjaan distribution
@@ -80,6 +122,19 @@ export async function GET() {
       pendudukByPendidikan: pendudukByPendidikan.map(p => ({ name: p.pendidikan, value: p._count.pendidikan })),
       pendudukByAgama: pendudukByAgama.map(p => ({ name: p.agama, value: p._count.agama })),
       suratByJenis: suratByJenis.map(s => ({ name: s.jenisSurat, value: s._count.jenisSurat })),
+      // New stats
+      totalKegiatan,
+      kegiatanAkanDatang,
+      kegiatanBerlangsung,
+      kegiatanSelesai,
+      totalAgenda,
+      agendaToday,
+      totalChatRooms,
+      chatRoomsActive,
+      totalNotifikasi,
+      notifikasiUnread,
+      recentKegiatan,
+      upcomingAgenda,
     })
   } catch (error) {
     console.error('Get stats error:', error)

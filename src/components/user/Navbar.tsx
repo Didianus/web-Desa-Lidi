@@ -10,8 +10,9 @@ import { Menu, LogIn, LogOut, Shield, Trees } from 'lucide-react'
 const navItems = [
   { key: 'home', label: 'Home' },
   { key: 'profil', label: 'Profil Desa' },
-  { key: 'berita', label: 'Berita Desa' },
+  { key: 'berita', label: 'Berita' },
   { key: 'pengumuman', label: 'Pengumuman' },
+  { key: 'kegiatan', label: 'Kegiatan' },
   { key: 'galeri', label: 'Galeri' },
   { key: 'layanan-surat', label: 'Layanan Surat' },
   { key: 'kontak', label: 'Kontak' },
