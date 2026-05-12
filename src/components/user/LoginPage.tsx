@@ -62,8 +62,8 @@ export function LoginPage() {
             <div className="w-16 h-16 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Trees className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Login Admin</h1>
-            <p className="text-gray-500 mt-1">Masuk ke panel administrasi desa</p>
+            <h1 className="text-2xl font-bold text-gray-900">Login Desa</h1>
+            <p className="text-gray-500 mt-1">Masuk untuk mengakses layanan desa</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,10 +94,22 @@ export function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-emerald-50 rounded-lg">
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-500">
+              Belum punya akun?{' '}
+              <button
+                onClick={() => setCurrentPage('register')}
+                className="text-emerald-600 hover:text-emerald-700 font-medium"
+              >
+                Daftar sebagai Warga
+              </button>
+            </p>
+          </div>
+
+          <div className="mt-4 p-4 bg-emerald-50 rounded-lg">
             <p className="text-xs text-emerald-700 font-medium mb-1">Demo Login:</p>
-            <p className="text-xs text-emerald-600">Username: <code className="bg-emerald-100 px-1 rounded">admin</code></p>
-            <p className="text-xs text-emerald-600">Password: <code className="bg-emerald-100 px-1 rounded">admin123</code></p>
+            <p className="text-xs text-emerald-600">Admin: <code className="bg-emerald-100 px-1 rounded">admin</code> / <code className="bg-emerald-100 px-1 rounded">admin123</code></p>
+            <p className="text-xs text-emerald-600">Warga: <code className="bg-emerald-100 px-1 rounded">warga_budi</code> / <code className="bg-emerald-100 px-1 rounded">admin123</code></p>
           </div>
         </CardContent>
       </Card>

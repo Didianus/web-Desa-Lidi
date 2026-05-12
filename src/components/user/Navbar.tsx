@@ -5,7 +5,7 @@ import { useAppStore } from '@/stores/useAppStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
-import { Menu, LogIn, LogOut, Shield, Trees } from 'lucide-react'
+import { Menu, LogIn, LogOut, Shield, Trees, UserPlus } from 'lucide-react'
 
 const navItems = [
   { key: 'home', label: 'Home' },
@@ -97,15 +97,26 @@ export function Navbar() {
                 Logout
               </Button>
             ) : (
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => setCurrentPage('login')}
-                className="hidden md:flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700"
-              >
-                <LogIn className="w-4 h-4" />
-                Login
-              </Button>
+              <div className="hidden md:flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage('register')}
+                  className="items-center gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Daftar
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => setCurrentPage('login')}
+                  className="items-center gap-2 bg-emerald-600 hover:bg-emerald-700"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Login
+                </Button>
+              </div>
             )}
 
             {/* Mobile Menu */}
@@ -158,12 +169,20 @@ export function Navbar() {
                         <LogOut className="w-4 h-4" /> Logout
                       </button>
                     ) : (
-                      <button
-                        onClick={() => { setCurrentPage('login'); setMobileMenuOpen(false) }}
-                        className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-600 text-white hover:bg-emerald-700 transition-all flex items-center gap-2"
-                      >
-                        <LogIn className="w-4 h-4" /> Login
-                      </button>
+                      <>
+                        <button
+                          onClick={() => { setCurrentPage('register'); setMobileMenuOpen(false) }}
+                          className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-all flex items-center gap-2"
+                        >
+                          <UserPlus className="w-4 h-4" /> Daftar Akun Warga
+                        </button>
+                        <button
+                          onClick={() => { setCurrentPage('login'); setMobileMenuOpen(false) }}
+                          className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition-all flex items-center gap-2"
+                        >
+                          <LogIn className="w-4 h-4" /> Login
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>

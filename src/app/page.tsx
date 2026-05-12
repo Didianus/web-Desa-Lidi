@@ -16,6 +16,7 @@ import { GaleriPage } from '@/components/user/GaleriPage'
 import { LayananSuratPage } from '@/components/user/LayananSuratPage'
 import { KontakPage } from '@/components/user/KontakPage'
 import { LoginPage } from '@/components/user/LoginPage'
+import { RegisterPage } from '@/components/user/RegisterPage'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { AdminHeader } from '@/components/admin/AdminHeader'
 import { AdminDashboard } from '@/components/admin/AdminDashboard'
@@ -70,6 +71,10 @@ function UserLayout() {
 
   if (currentPage === 'login') {
     return <LoginPage />
+  }
+
+  if (currentPage === 'register') {
+    return <RegisterPage />
   }
 
   return (
