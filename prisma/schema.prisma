@@ -12,12 +12,32 @@ model User {
   username  String   @unique
   password  String
   name      String
-  role      String   @default("admin") // admin, user
+  role      String   @default("admin") // admin, kepala_desa
+  avatar    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   berita         Berita[]
   suratPengajuan SuratPengajuan[]
+}
+
+model Penduduk {
+  id           String   @id @default(cuid())
+  nik          String   @unique
+  nama         String
+  jenisKelamin String   // Laki-laki, Perempuan
+  tempatLahir  String?
+  tanggalLahir DateTime?
+  alamat       String
+  rt           String   @default("001")
+  rw           String   @default("001")
+  pekerjaan    String   @default("Belum Bekerja")
+  status       String   @default("aktif") // aktif, pindah, meninggal
+  agama        String   @default("Islam")
+  statusKawin  String   @default("Belum Kawin") // Belum Kawin, Kawin, Cerai
+  pendidikan   String   @default("SD") // SD, SMP, SMA, D3, S1, S2, S3
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Berita {
@@ -59,6 +79,7 @@ model SuratPengajuan {
   alamat     String
   jenisSurat String   // domisili, usaha, kelahiran, kematian
   keterangan String?
+  noSurat    String?
   status     String   @default("pending") // pending, diproses, selesai, ditolak
   userId     String?
   createdAt  DateTime @default(now())

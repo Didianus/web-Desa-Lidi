@@ -17,13 +17,15 @@ import { LayananSuratPage } from '@/components/user/LayananSuratPage'
 import { KontakPage } from '@/components/user/KontakPage'
 import { LoginPage } from '@/components/user/LoginPage'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
+import { AdminHeader } from '@/components/admin/AdminHeader'
 import { AdminDashboard } from '@/components/admin/AdminDashboard'
 import { BeritaManager } from '@/components/admin/BeritaManager'
 import { PengumumanManager } from '@/components/admin/PengumumanManager'
 import { GaleriManager } from '@/components/admin/GaleriManager'
+import { PendudukManager } from '@/components/admin/PendudukManager'
 import { SuratManager } from '@/components/admin/SuratManager'
-import { ProfilManager } from '@/components/admin/ProfilManager'
-import { UserManager } from '@/components/admin/UserManager'
+import { LaporanPage } from '@/components/admin/LaporanPage'
+import { PengaturanPage } from '@/components/admin/PengaturanPage'
 
 function UserLayout() {
   const { currentPage } = useAppStore()
@@ -54,14 +56,11 @@ function UserLayout() {
         return <LayananSuratPage />
       case 'kontak':
         return <KontakPage />
-      case 'login':
-        return <LoginPage />
       default:
         return <HeroSection />
     }
   }
 
-  // Login page has its own full-screen layout
   if (currentPage === 'login') {
     return <LoginPage />
   }
@@ -78,10 +77,9 @@ function UserLayout() {
 }
 
 function AdminLayout() {
-  const { currentAdminPage } = useAppStore()
+  const { currentAdminPage, adminDarkMode } = useAppStore()
   const { isAuthenticated } = useAuthStore()
 
-  // Redirect to login if not authenticated
   if (!isAuthenticated) {
     return <LoginPage />
   }
@@ -96,23 +94,28 @@ function AdminLayout() {
         return <PengumumanManager />
       case 'galeri':
         return <GaleriManager />
+      case 'penduduk':
+        return <PendudukManager />
       case 'surat':
         return <SuratManager />
-      case 'profil':
-        return <ProfilManager />
-      case 'users':
-        return <UserManager />
+      case 'laporan':
+        return <LaporanPage />
+      case 'pengaturan':
+        return <PengaturanPage />
       default:
         return <AdminDashboard />
     }
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className={`flex h-screen ${adminDarkMode ? 'dark bg-gray-950' : 'bg-gray-50'}`}>
       <AdminSidebar />
-      <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-        {renderPage()}
-      </main>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <AdminHeader />
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+          {renderPage()}
+        </main>
+      </div>
     </div>
   )
 }

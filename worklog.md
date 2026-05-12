@@ -55,3 +55,37 @@ Stage Summary:
 - All CRUD APIs functional
 - Responsive design with mobile support
 - Client-side routing via Zustand state management
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Build Website Desa Full Stack - Part 2 (Enhanced Admin with Penduduk, Laporan, Pengaturan, Charts, Dark Mode)
+
+Work Log:
+- Updated Prisma schema: Added Penduduk model (NIK, nama, jenisKelamin, tempatLahir, tanggalLahir, alamat, rt, rw, pekerjaan, status, agama, statusKawin, pendidikan), added noSurat to SuratPengajuan, added avatar to User, added kepala_desa role
+- Pushed new schema and seeded with 20 penduduk records + kepala_desa user
+- Created /api/penduduk (GET, POST) and /api/penduduk/[id] (GET, PUT, DELETE) with search, filter, NIK uniqueness validation
+- Enhanced /api/stats with pendudukByPekerjaan, pendudukByPendidikan, pendudukByAgama, suratByJenis, recentSurat, recentBerita, pendudukLaki/Perempuan/Pindah/Meninggal counts
+- Updated useAppStore with new AdminPage types (penduduk, laporan, pengaturan) and adminDarkMode state
+- Built enhanced AdminSidebar with user info card, role badge (admin/kepala_desa), new menu items (Penduduk, Laporan, Pengaturan), dark mode support
+- Built AdminHeader with page title, date, search, notification bell, dark mode toggle, user avatar
+- Built enhanced AdminDashboard with recharts (BarChart, PieChart) for surat by jenis, gender distribution, pekerjaan distribution, recent surat list, status cards with trend badges
+- Built PendudukManager with full CRUD, search by NIK/nama/alamat, filter by status, comprehensive form with 12 fields (NIK, nama, jenis kelamin, tempat/tanggal lahir, alamat, RT/RW, pekerjaan, agama, status kawin, pendidikan, status)
+- Built LaporanPage with 6 chart sections: Surat per Jenis (bar), Tingkat Pendidikan (donut), Distribusi Pekerjaan (horizontal bar), Komposisi Agama (pie), Status Surat (bar), Summary Table
+- Built PengaturanPage with tabs: Profil Desa, Akun, Password change
+- Enhanced SuratManager with verification (noSurat generation), PDF print preview (KOP surat, isi surat, TTD), dark mode support
+- Updated main page.tsx with new AdminLayout (sidebar + header + content), dark mode class application
+- All APIs tested and working: /api/stats returns 20 penduduk, /api/penduduk returns all records
+- Lint check passed with no errors
+
+Stage Summary:
+- Complete enhanced admin panel with 8 menu items
+- Data Penduduk CRUD with 20 dummy records and comprehensive fields
+- Laporan page with 6+ interactive charts (recharts)
+- Pengaturan page with profil, akun, password management
+- Dark mode toggle for admin panel
+- Role support: admin and kepala_desa (demo: kepala_desa/admin123)
+- Surat verification with auto-generated noSurat
+- PDF print preview for completed surat (KOP surat format)
+- Admin header bar with search, notifications, user info
+- All components support dark mode styling

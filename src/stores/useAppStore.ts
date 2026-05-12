@@ -17,9 +17,10 @@ export type AdminPage =
   | 'berita'
   | 'pengumuman'
   | 'galeri'
+  | 'penduduk'
   | 'surat'
-  | 'profil'
-  | 'users'
+  | 'laporan'
+  | 'pengaturan'
 
 interface AppState {
   viewMode: 'user' | 'admin'
@@ -34,6 +35,8 @@ interface AppState {
   setMobileMenuOpen: (open: boolean) => void
   adminSidebarOpen: boolean
   setAdminSidebarOpen: (open: boolean) => void
+  adminDarkMode: boolean
+  setAdminDarkMode: (dark: boolean) => void
 }
 
 export const useAppStore = create<AppState>()(
@@ -51,11 +54,14 @@ export const useAppStore = create<AppState>()(
       setMobileMenuOpen: (open) => set({ mobileMenuOpen: open }),
       adminSidebarOpen: true,
       setAdminSidebarOpen: (open) => set({ adminSidebarOpen: open }),
+      adminDarkMode: false,
+      setAdminDarkMode: (dark) => set({ adminDarkMode: dark }),
     }),
     {
       name: 'desa-app-store',
       partialize: (state) => ({
         viewMode: state.viewMode,
+        adminDarkMode: state.adminDarkMode,
       }),
     }
   )
