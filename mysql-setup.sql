@@ -1,5 +1,5 @@
 -- ============================================
--- MySQL Setup Script untuk Desa Sukamaju
+-- MySQL Setup Script untuk Desa Lidi
 -- Jalankan di MySQL/MariaDB server Anda
 -- ============================================
 

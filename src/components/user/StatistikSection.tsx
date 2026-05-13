@@ -1,65 +1,73 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Users, Home, User, UserCheck } from 'lucide-react'
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Users, Home, User, UserCheck } from "lucide-react";
 
 export function StatistikSection() {
-  const [profil, setProfil] = useState<any>(null)
+  const [profil, setProfil] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/profil').then(r => r.json()).then(d => setProfil(d.profil)).catch(() => {})
-  }, [])
+    fetch("/api/profil")
+      .then((r) => r.json())
+      .then((d) => setProfil(d.profil))
+      .catch(() => {});
+  }, []);
 
   const stats = [
     {
       icon: Users,
-      label: 'Jumlah Penduduk',
-      value: profil?.jumlahPenduduk?.toLocaleString() || '0',
-      color: 'bg-emerald-500',
-      bgColor: 'bg-emerald-50',
-      textColor: 'text-emerald-600',
+      label: "Jumlah Penduduk",
+      value: profil?.jumlahPenduduk?.toLocaleString() || "0",
+      color: "bg-emerald-500",
+      bgColor: "bg-emerald-50",
+      textColor: "text-emerald-600",
     },
     {
       icon: Home,
-      label: 'Kepala Keluarga',
-      value: profil?.jumlahKK?.toLocaleString() || '0',
-      color: 'bg-teal-500',
-      bgColor: 'bg-teal-50',
-      textColor: 'text-teal-600',
+      label: "Kepala Keluarga",
+      value: profil?.jumlahKK?.toLocaleString() || "0",
+      color: "bg-teal-500",
+      bgColor: "bg-teal-50",
+      textColor: "text-teal-600",
     },
     {
       icon: User,
-      label: 'Laki-laki',
-      value: profil?.jumlahLaki?.toLocaleString() || '0',
-      color: 'bg-cyan-500',
-      bgColor: 'bg-cyan-50',
-      textColor: 'text-cyan-600',
+      label: "Laki-laki",
+      value: profil?.jumlahLaki?.toLocaleString() || "0",
+      color: "bg-cyan-500",
+      bgColor: "bg-cyan-50",
+      textColor: "text-cyan-600",
     },
     {
       icon: UserCheck,
-      label: 'Perempuan',
-      value: profil?.jumlahPerempuan?.toLocaleString() || '0',
-      color: 'bg-green-500',
-      bgColor: 'bg-green-50',
-      textColor: 'text-green-600',
+      label: "Perempuan",
+      value: profil?.jumlahPerempuan?.toLocaleString() || "0",
+      color: "bg-green-500",
+      bgColor: "bg-green-50",
+      textColor: "text-green-600",
     },
-  ]
+  ];
 
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-900">Data Penduduk</h2>
-          <p className="text-gray-500 mt-2">Statistik kependudukan Desa Sukamaju</p>
+          <p className="text-gray-500 mt-2">Statistik kependudukan Desa Lidi</p>
           <div className="w-20 h-1 bg-emerald-500 mx-auto mt-3 rounded-full" />
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {stats.map((stat, i) => (
-            <Card key={i} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+            <Card
+              key={i}
+              className="border-0 shadow-md hover:shadow-lg transition-shadow"
+            >
               <CardContent className="p-6 text-center">
-                <div className={`w-14 h-14 ${stat.bgColor} rounded-xl flex items-center justify-center mx-auto mb-4`}>
+                <div
+                  className={`w-14 h-14 ${stat.bgColor} rounded-xl flex items-center justify-center mx-auto mb-4`}
+                >
                   <stat.icon className={`w-7 h-7 ${stat.textColor}`} />
                 </div>
                 <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
@@ -78,7 +86,9 @@ export function StatistikSection() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Luas Wilayah</p>
-                <p className="text-lg font-bold text-gray-900">{profil?.luasWilayah || 0} Km²</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {profil?.luasWilayah || 0} Km²
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -89,7 +99,9 @@ export function StatistikSection() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Kecamatan</p>
-                <p className="text-lg font-bold text-gray-900">{profil?.kecamatan || '-'}</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {profil?.kecamatan || "-"}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -100,12 +112,14 @@ export function StatistikSection() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Kabupaten/Kota</p>
-                <p className="text-lg font-bold text-gray-900">{profil?.kabupaten || '-'}</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {profil?.kabupaten || "-"}
+                </p>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
     </section>
-  )
+  );
 }

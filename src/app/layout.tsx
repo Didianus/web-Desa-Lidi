@@ -14,10 +14,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Desa Sukamaju - Website Resmi Pemerintah Desa",
-  description: "Website resmi Pemerintah Desa Sukamaju, Kecamatan Cimahi Selatan, Kota Cimahi, Jawa Barat. Melayani masyarakat dengan transparan dan profesional.",
-  keywords: ["Desa Sukamaju", "Pemerintah Desa", "Cimahi", "Jawa Barat", "Layanan Desa"],
-  authors: [{ name: "Pemerintah Desa Sukamaju" }],
+  title: "Desa Lidi - Website Resmi Pemerintah Desa",
+  description:
+    "Website resmi Pemerintah Desa Lidi, Kecamatan Rana Mese, Kab/Kota Manggarai Timur, NTT. Melayani masyarakat dengan transparan dan profesional.",
+  keywords: [
+    "Desa Lidi",
+    "Pemerintah Desa",
+    "Rana Mese",
+    "Manggarai Timur",
+    "Layanan Desa",
+  ],
+  authors: [{ name: "Pemerintah Desa Lidi" }],
 };
 
 export default function RootLayout({

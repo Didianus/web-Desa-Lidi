@@ -1,17 +1,29 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useAppStore } from '@/stores/useAppStore'
-import { Button } from '@/components/ui/button'
-import { Trees, MapPin, Phone, Mail, Facebook, Instagram, Youtube, ExternalLink } from 'lucide-react'
+import { useEffect, useState } from "react";
+import { useAppStore } from "@/stores/useAppStore";
+import { Button } from "@/components/ui/button";
+import {
+  Trees,
+  MapPin,
+  Phone,
+  Mail,
+  Facebook,
+  Instagram,
+  Youtube,
+  ExternalLink,
+} from "lucide-react";
 
 export function Footer() {
-  const { setCurrentPage } = useAppStore()
-  const [profil, setProfil] = useState<any>(null)
+  const { setCurrentPage } = useAppStore();
+  const [profil, setProfil] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/profil').then(r => r.json()).then(d => setProfil(d.profil)).catch(() => {})
-  }, [])
+    fetch("/api/profil")
+      .then((r) => r.json())
+      .then((d) => setProfil(d.profil))
+      .catch(() => {});
+  }, []);
 
   return (
     <footer className="bg-emerald-900 text-white mt-auto">
@@ -24,12 +36,17 @@ export function Footer() {
                 <Trees className="w-6 h-6 text-emerald-700" />
               </div>
               <div>
-                <h3 className="font-bold text-lg">{profil?.namaDesa || 'Desa Sukamaju'}</h3>
-                <p className="text-emerald-300 text-xs">{profil?.kecamatan || 'Kecamatan Cimahi Selatan'}</p>
+                <h3 className="font-bold text-lg">
+                  {profil?.namaDesa || "Desa Lidi"}
+                </h3>
+                <p className="text-emerald-300 text-xs">
+                  {profil?.kecamatan || "Kecamatan Cimahi Selatan"}
+                </p>
               </div>
             </div>
             <p className="text-emerald-200 text-sm leading-relaxed">
-              Website resmi Pemerintah {profil?.namaDesa || 'Desa Sukamaju'}. Melayani masyarakat dengan transparan dan profesional.
+              Website resmi Pemerintah {profil?.namaDesa || "Desa Lidi"}.
+              Melayani masyarakat dengan transparan dan profesional.
             </p>
           </div>
 
@@ -38,16 +55,19 @@ export function Footer() {
             <h4 className="font-semibold text-base mb-4">Navigasi</h4>
             <ul className="space-y-2">
               {[
-                { key: 'home', label: 'Home' },
-                { key: 'profil', label: 'Profil Desa' },
-                { key: 'berita', label: 'Berita' },
-                { key: 'pengumuman', label: 'Pengumuman' },
-                { key: 'galeri', label: 'Galeri' },
-                { key: 'layanan-surat', label: 'Layanan Surat' },
+                { key: "home", label: "Home" },
+                { key: "profil", label: "Profil Desa" },
+                { key: "berita", label: "Berita" },
+                { key: "pengumuman", label: "Pengumuman" },
+                { key: "galeri", label: "Galeri" },
+                { key: "layanan-surat", label: "Layanan Surat" },
               ].map((item) => (
                 <li key={item.key}>
                   <button
-                    onClick={() => { setCurrentPage(item.key as any); window.scrollTo(0, 0) }}
+                    onClick={() => {
+                      setCurrentPage(item.key as any);
+                      window.scrollTo(0, 0);
+                    }}
                     className="text-emerald-200 hover:text-white text-sm transition-colors flex items-center gap-1"
                   >
                     <ExternalLink className="w-3 h-3" />
@@ -64,15 +84,15 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-emerald-200">
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
-                <span>{profil?.alamat || 'Jl. Raya Sukamaju No. 1'}</span>
+                <span>{profil?.alamat || "Jl. Raya Sukamaju No. 1"}</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-emerald-200">
                 <Phone className="w-4 h-4 shrink-0" />
-                <span>{profil?.telepon || '(022) 6654321'}</span>
+                <span>{profil?.telepon || "(022) 6654321"}</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-emerald-200">
                 <Mail className="w-4 h-4 shrink-0" />
-                <span>{profil?.email || 'desa@sukamaju.go.id'}</span>
+                <span>{profil?.email || "desa@sukamaju.go.id"}</span>
               </li>
             </ul>
           </div>
@@ -82,14 +102,21 @@ export function Footer() {
             <h4 className="font-semibold text-base mb-4">Media Sosial</h4>
             <div className="flex gap-3">
               {[Facebook, Instagram, Youtube].map((Icon, i) => (
-                <button key={i} className="w-10 h-10 bg-emerald-800 hover:bg-emerald-700 rounded-lg flex items-center justify-center transition-colors">
+                <button
+                  key={i}
+                  className="w-10 h-10 bg-emerald-800 hover:bg-emerald-700 rounded-lg flex items-center justify-center transition-colors"
+                >
                   <Icon className="w-5 h-5" />
                 </button>
               ))}
             </div>
             <div className="mt-6 p-4 bg-emerald-800 rounded-lg">
-              <p className="text-sm font-medium text-emerald-200">Jam Pelayanan</p>
-              <p className="text-xs text-emerald-300 mt-1">Senin - Jumat: 08.00 - 15.00 WIB</p>
+              <p className="text-sm font-medium text-emerald-200">
+                Jam Pelayanan
+              </p>
+              <p className="text-xs text-emerald-300 mt-1">
+                Senin - Jumat: 08.00 - 15.00 WIB
+              </p>
               <p className="text-xs text-emerald-300">Sabtu - Minggu: Tutup</p>
             </div>
           </div>
@@ -101,14 +128,16 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="text-sm text-emerald-300">
-              © {new Date().getFullYear()} {profil?.namaDesa || 'Desa Sukamaju'}. Hak cipta dilindungi.
+              © {new Date().getFullYear()} {profil?.namaDesa || "Desa Lidi"}.
+              Hak cipta dilindungi.
             </p>
             <p className="text-xs text-emerald-400">
-              Pemerintah {profil?.kabupaten || 'Kota Cimahi'} - {profil?.provinsi || 'Jawa Barat'}
+              Pemerintah {profil?.kabupaten || "Kota Cimahi"} -{" "}
+              {profil?.provinsi || "Jawa Barat"}
             </p>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }

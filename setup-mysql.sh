@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-# Setup MySQL untuk Aplikasi Desa Sukamaju
+# Setup MySQL untuk Aplikasi Desa Lidi
 # ============================================
 # 
 # Cara Penggunaan:
@@ -14,7 +14,7 @@
 
 set -e
 
-echo "🚀 Setup MySQL untuk Aplikasi Desa Sukamaju"
+echo "🚀 Setup MySQL untuk Aplikasi Desa Lidi"
 echo "============================================"
 
 # Konfigurasi

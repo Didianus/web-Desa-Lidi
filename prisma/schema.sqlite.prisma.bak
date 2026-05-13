@@ -97,15 +97,15 @@ model SuratPengajuan {
 
 model ProfilDesa {
   id                  String   @id @default(cuid())
-  namaDesa            String   @default("Desa Sukamaju") 
-  kecamatan           String   @default("Kecamatan Sukamaju") 
-  kabupaten           String   @default("Kabupaten Sukamaju") 
-  provinsi            String   @default("Jawa Barat") 
+  namaDesa            String   @default("Desa Lidi") 
+  kecamatan           String   @default("Kecamatan Rana Mese") 
+  kabupaten           String   @default("Kabupaten Manggarai Timur") 
+  provinsi            String   @default("NTT") 
   kodePos             String   @default("12345") 
   sejarah             String   @default("Sejarah desa akan diisi oleh admin.") 
   visi                String   @default("Visi desa akan diisi oleh admin.") 
   misi                String   @default("Misi desa akan diisi oleh admin.") 
-  kepalaDesa          String   @default("H. Ahmad Suryadi") 
+  kepalaDesa          String   @default("Pak Dedos") 
   sambutanKepalaDesa  String   @default("Sambutan kepala desa akan diisi oleh admin.") 
   fotoKepalaDesa      String   @default("") 
   luasWilayah         Float    @default(0)
@@ -113,9 +113,9 @@ model ProfilDesa {
   jumlahKK            Int      @default(0)
   jumlahLaki          Int      @default(0)
   jumlahPerempuan     Int      @default(0)
-  telepon             String   @default("(021) 1234567") 
-  email               String   @default("desa@sukamaju.go.id") 
-  alamat              String   @default("Jl. Raya Desa No. 1, Sukamaju") 
+  telepon             String   @default("085773617907") 
+  email               String   @default("desa@Lidi.go.id") 
+  alamat              String   @default("Jl. Desa Lidi") 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }

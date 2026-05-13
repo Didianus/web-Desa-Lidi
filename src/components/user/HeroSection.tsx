@@ -1,18 +1,30 @@
-'use client'
+"use client";
 
-import { useAppStore } from '@/stores/useAppStore'
-import { Button } from '@/components/ui/button'
-import { ChevronRight, FileText, Users, MapPin, ArrowRight } from 'lucide-react'
+import { useAppStore } from "@/stores/useAppStore";
+import { Button } from "@/components/ui/button";
+import {
+  ChevronRight,
+  FileText,
+  Users,
+  MapPin,
+  ArrowRight,
+} from "lucide-react";
 
 export function HeroSection() {
-  const { setCurrentPage } = useAppStore()
+  const { setCurrentPage } = useAppStore();
 
   return (
     <section className="relative min-h-[85vh] flex items-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-900" />
-      <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.15\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
-      
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+        }}
+      />
+
       {/* Overlay gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent" />
 
@@ -21,22 +33,23 @@ export function HeroSection() {
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full text-emerald-100 text-sm font-medium mb-6">
             <MapPin className="w-4 h-4" />
-            Kec. Cimahi Selatan, Kota Cimahi
+            Kec. Rana Mese, Kab. Manggarai, NTT
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
             Selamat Datang di
-            <span className="block text-emerald-300 mt-2">Desa Sukamaju</span>
+            <span className="block text-emerald-300 mt-2">Desa Lidi</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-emerald-100 leading-relaxed mb-8">
-            Maju, Mandiri, Sejahtera, dan Berbudaya. Mewujudkan tata kelola pemerintahan yang baik dan transparan untuk masyarakat Desa Sukamaju.
+            Maju, Mandiri, Sejahtera, dan Berbudaya. Mewujudkan tata kelola
+            pemerintahan yang baik dan transparan untuk masyarakat Desa Lidi.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
             <Button
               size="lg"
-              onClick={() => setCurrentPage('profil')}
+              onClick={() => setCurrentPage("profil")}
               className="bg-white text-emerald-700 hover:bg-emerald-50 font-semibold text-base px-8"
             >
               Profil Desa
@@ -45,7 +58,7 @@ export function HeroSection() {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => setCurrentPage('layanan-surat')}
+              onClick={() => setCurrentPage("layanan-surat")}
               className="border-white/40 text-white hover:bg-white/10 font-semibold text-base px-8"
             >
               <FileText className="w-5 h-5 mr-2" />
@@ -56,9 +69,9 @@ export function HeroSection() {
           {/* Quick Stats */}
           <div className="flex flex-wrap gap-8 mt-12 pt-8 border-t border-white/20">
             {[
-              { icon: Users, value: '8.542', label: 'Penduduk' },
-              { icon: MapPin, value: '3.5', label: 'Km² Luas' },
-              { icon: FileText, value: '2.345', label: 'Kepala KK' },
+              { icon: Users, value: "8.542", label: "Penduduk" },
+              { icon: MapPin, value: "3.5", label: "Km² Luas" },
+              { icon: FileText, value: "2.345", label: "Kepala KK" },
             ].map((stat, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-white/15 rounded-lg flex items-center justify-center">
@@ -81,5 +94,5 @@ export function HeroSection() {
         </svg>
       </div>
     </section>
-  )
+  );
 }
