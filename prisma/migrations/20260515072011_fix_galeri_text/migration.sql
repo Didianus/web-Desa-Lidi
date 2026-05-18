@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Galeri` MODIFY `image` TEXT NOT NULL,
+    MODIFY `images` TEXT NULL;

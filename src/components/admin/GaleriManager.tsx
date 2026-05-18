@@ -77,7 +77,14 @@ export function GaleriManager() {
   const totalPages = Math.ceil(total / limit);
 
   const allAlbums = Array.from(
-    new Set(list.map((item) => item.album).filter(Boolean)),
+    new Set(
+      list
+        .map((item) => item.album?.trim())
+        .filter(
+          (album): album is string =>
+            typeof album === "string" && album.length > 0,
+        ),
+    ),
   );
 
   const fetchData = () => {
@@ -437,8 +444,8 @@ export function GaleriManager() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="__new__">+ Album Baru</SelectItem>
-                        {allAlbums.map((album) => (
-                          <SelectItem key={album} value={form.album ?? ""}>
+                        {allAlbums.map((album, index) => (
+                          <SelectItem key={`${album}-${index}`} value={album}>
                             {album}
                           </SelectItem>
                         ))}
@@ -502,11 +509,14 @@ export function GaleriManager() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="semua">Semua Album</SelectItem>
-            {allAlbums.map((album) => (
-              <SelectItem key={album} value={form.album ?? ""}>
-                {album}
-              </SelectItem>
-            ))}
+              {allAlbums.map((album, index) => (
+                <SelectItem
+                  key={`${album}-${index}`}
+                  value={album}
+                  >
+                  {album}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>

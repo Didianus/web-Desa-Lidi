@@ -70,11 +70,11 @@ model Pengumuman {
 
 model Galeri {
   id        String   @id @default(cuid())
-  title     String   
-  image     String   
-  images    String?   // JSON array for multiple images
-  album     String   @default("Umum")  // album name
-  category  String   @default("umum")  // umum, kegiatan, pembangunan, budaya
+  title     String
+  image     String   @db.Text
+  images    String?  @db.Text
+  album     String   @default("Umum")
+  category  String   @default("umum")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

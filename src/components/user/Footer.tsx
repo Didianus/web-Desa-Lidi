@@ -40,7 +40,7 @@ export function Footer() {
                   {profil?.namaDesa || "Desa Lidi"}
                 </h3>
                 <p className="text-emerald-300 text-xs">
-                  {profil?.kecamatan || "Kecamatan Cimahi Selatan"}
+                  {profil?.kecamatan || "Kecamatan Rana Mese"}
                 </p>
               </div>
             </div>
@@ -84,15 +84,15 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-emerald-200">
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
-                <span>{profil?.alamat || "Jl. Raya Sukamaju No. 1"}</span>
+                <span>{profil?.alamat || "Jl. Desa Lidi No. 1"}</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-emerald-200">
                 <Phone className="w-4 h-4 shrink-0" />
-                <span>{profil?.telepon || "(022) 6654321"}</span>
+                <span>{profil?.telepon || "085773617907"}</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-emerald-200">
                 <Mail className="w-4 h-4 shrink-0" />
-                <span>{profil?.email || "desa@sukamaju.go.id"}</span>
+                <span>{profil?.email || "desa@Lidi.go.id"}</span>
               </li>
             </ul>
           </div>
@@ -101,14 +101,32 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-base mb-4">Media Sosial</h4>
             <div className="flex gap-3">
-              {[Facebook, Instagram, Youtube].map((Icon, i) => (
-                <button
-                  key={i}
-                  className="w-10 h-10 bg-emerald-800 hover:bg-emerald-700 rounded-lg flex items-center justify-center transition-colors"
-                >
-                  <Icon className="w-5 h-5" />
-                </button>
-              ))}
+              <a
+                href="https://facebook.com/desalidi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-emerald-800 hover:bg-emerald-700 rounded-lg flex items-center justify-center transition-colors"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+
+              <a
+                href="https://instagram.com/desalidi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-emerald-800 hover:bg-emerald-700 rounded-lg flex items-center justify-center transition-colors"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+
+              <a
+                href="https://youtube.com/@desalidi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-emerald-800 hover:bg-emerald-700 rounded-lg flex items-center justify-center transition-colors"
+              >
+                <Youtube className="w-5 h-5" />
+              </a>
             </div>
             <div className="mt-6 p-4 bg-emerald-800 rounded-lg">
               <p className="text-sm font-medium text-emerald-200">
@@ -132,8 +150,8 @@ export function Footer() {
               Hak cipta dilindungi.
             </p>
             <p className="text-xs text-emerald-400">
-              Pemerintah {profil?.kabupaten || "Kota Cimahi"} -{" "}
-              {profil?.provinsi || "Jawa Barat"}
+              Pemerintah {profil?.kabupaten || "Manggarai Timur"} -{" "}
+              {profil?.provinsi || "Nusa Tenggara Timur"}
             </p>
           </div>
         </div>
