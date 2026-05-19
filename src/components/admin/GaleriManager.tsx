@@ -1,5 +1,6 @@
 "use client";
 
+import { CldUploadButton } from "next-cloudinary";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -353,14 +354,35 @@ export function GaleriManager() {
                   <label className="text-sm font-medium dark:text-gray-300">
                     URL Gambar Utama *
                   </label>
-                  <Input
-                    value={form.image}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, image: e.target.value }))
-                    }
-                    placeholder="https://..."
-                    className="mt-1"
-                  />
+                  <CldUploadButton
+                    uploadPreset="desa-lidi"
+                    options={{
+                      sources: ["local", "camera", "url"],
+                      multiple: false,
+                    }}
+                    onSuccess={(result: any) => {
+                      setForm((f) => ({
+                        ...f,
+                        image: result.info.secure_url,
+                      }));
+
+                      toast({
+                        title: "Berhasil",
+                        description: "Gambar berhasil diupload",
+                      });
+                    }}
+                  >
+                    <Button type="button" className="bg-emerald-600">
+                      Upload Gambar
+                    </Button>
+                  </CldUploadButton>
+                  {form.image && (
+                    <img
+                      src={form.image}
+                      alt="Preview"
+                      className="w-full h-48 object-cover rounded-lg mt-4"
+                    />
+                  )}
                 </div>
                 <div>
                   <div className="flex items-center justify-between">
@@ -509,14 +531,11 @@ export function GaleriManager() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="semua">Semua Album</SelectItem>
-              {allAlbums.map((album, index) => (
-                <SelectItem
-                  key={`${album}-${index}`}
-                  value={album}
-                  >
-                  {album}
-                </SelectItem>
-              ))}
+            {allAlbums.map((album, index) => (
+              <SelectItem key={`${album}-${index}`} value={album}>
+                {album}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
