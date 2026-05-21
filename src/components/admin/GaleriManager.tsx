@@ -1,6 +1,5 @@
 "use client";
 
-import { CldUploadButton } from "next-cloudinary";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,6 +37,7 @@ import {
   Download,
   FileJson,
   FileSpreadsheet,
+  FileText,
   Search,
   X,
 } from "lucide-react";
@@ -193,32 +193,70 @@ export function GaleriManager() {
   const handleExport = async (format: string) => {
     try {
       const res = await fetch(`/api/export?type=galeri&format=${format}`);
+
       if (format === "csv") {
         const text = await res.text();
-        const blob = new Blob([text], { type: "text/csv" });
+
+        const blob = new Blob([text], {
+          type: "text/csv",
+        });
+
         const url = URL.createObjectURL(blob);
+
         const a = document.createElement("a");
+
         a.href = url;
-        a.download = `galeri_${new Date().toISOString().split("T")[0]}.csv`;
+
+        a.download = `galeri.csv`;
+
         a.click();
+
         URL.revokeObjectURL(url);
+      } else if (format === "pdf") {
+        const blob = await res.blob();
+
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+
+        a.href = url;
+
+        a.download = `galeri.pdf`;
+
+        document.body.appendChild(a);
+
+        a.click();
+
+        a.remove();
+
+        window.URL.revokeObjectURL(url);
       } else {
         const data = await res.json();
+
         const blob = new Blob([JSON.stringify(data, null, 2)], {
           type: "application/json",
         });
+
         const url = URL.createObjectURL(blob);
+
         const a = document.createElement("a");
+
         a.href = url;
-        a.download = `galeri_${new Date().toISOString().split("T")[0]}.json`;
+
+        a.download = `galeri.json`;
+
         a.click();
+
         URL.revokeObjectURL(url);
       }
+
       toast({
         title: "Berhasil",
         description: `Data berhasil diexport sebagai ${format.toUpperCase()}`,
       });
-    } catch {
+    } catch (error) {
+      console.error(error);
+
       toast({
         title: "Error",
         description: "Gagal mengexport data",
@@ -314,6 +352,9 @@ export function GaleriManager() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => handleExport("pdf")}>
+                <FileText className="w-4 h-4 mr-2" /> Export PDF
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleExport("csv")}>
                 <FileSpreadsheet className="w-4 h-4 mr-2" /> Export CSV
               </DropdownMenuItem>
@@ -354,33 +395,24 @@ export function GaleriManager() {
                   <label className="text-sm font-medium dark:text-gray-300">
                     URL Gambar Utama *
                   </label>
-                  <CldUploadButton
-                    uploadPreset="desa-lidi"
-                    options={{
-                      sources: ["local", "camera", "url"],
-                      multiple: false,
-                    }}
-                    onSuccess={(result: any) => {
+
+                  <Input
+                    value={form.image}
+                    onChange={(e) =>
                       setForm((f) => ({
                         ...f,
-                        image: result.info.secure_url,
-                      }));
+                        image: e.target.value,
+                      }))
+                    }
+                    placeholder="https://example.com/gambar.jpg"
+                    className="mt-1"
+                  />
 
-                      toast({
-                        title: "Berhasil",
-                        description: "Gambar berhasil diupload",
-                      });
-                    }}
-                  >
-                    <Button type="button" className="bg-emerald-600">
-                      Upload Gambar
-                    </Button>
-                  </CldUploadButton>
                   {form.image && (
                     <img
                       src={form.image}
                       alt="Preview"
-                      className="w-full h-48 object-cover rounded-lg mt-4"
+                      className="w-full h-48 object-cover rounded-lg mt-4 border"
                     />
                   )}
                 </div>

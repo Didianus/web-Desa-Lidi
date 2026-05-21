@@ -16,26 +16,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Desa Lidi - Website Resmi Pemerintah Desa",
   description:
-    "Website resmi Pemerintah Desa Lidi, Kecamatan Rana Mese, Kab/Kota Manggarai Timur, NTT. Melayani masyarakat dengan transparan dan profesional.",
-  keywords: [
-    "Desa Lidi",
-    "Pemerintah Desa",
-    "Rana Mese",
-    "Manggarai Timur",
-    "Layanan Desa",
-  ],
-  authors: [{ name: "Pemerintah Desa Lidi" }],
+    "Website resmi Pemerintah Desa Lidi, Kecamatan Rana Mese, Kab/Kota Manggarai Timur, NTT.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         <Toaster richColors position="top-right" />
